@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <script>
+        function logThis(){
+            console.log(this); 
+        }
+
+        logThis(); // window object as this refers to window object is global scope
+
+        // explicitly gives this a value through .call(), gives context to function
+        logThis.call('hello'); // refers to string hello
+
+        // arrow function don't bind to their own this they inherit from their environment(like if they are declared inside object they inherit this of object instance)
+        function1 = () => {
+            console.log(this); // to window object(as in global scope refers to window object)
+        }
+        function1('hey');
+
+        function loadProduct(){
+            const xhr = new XMLHttpRequest();
+            xhr.open('GET','https://supersimplebackend.dev/products/first');
+           
+            // event listner must be added above send because if response is cached or returned quickly then load event can be missed if written below send
+            xhr.addEventListener('load', () => {
+               console.log('inside load:');          
+               console.log(JSON.parse(xhr.responseText));          
+            })
+            xhr.send();
+            console.log(xhr.responseText);
+            console.log('outside load:');          
+
+        }
+
+        function loadProductPromise() {
+            return new Promise((resolve) => {
+                const xhr = new XMLHttpRequest();
+                xhr.open('GET', 'https://supersimplebackend.dev/products/first')
+                xhr.addEventListener('load', () => {
+                    resolve(xhr.responseText)
+                })
+                xhr.send();
+            })
+        }
+        loadProductPromise().then((value) => {
+            console.log(value);
+
+        });
+    </script>
+</body>
+</html>
